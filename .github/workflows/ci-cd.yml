@@ -27,6 +27,19 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Kubernetes CLI
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG_JSON }}" > kubeconfig.json
+          export KUBECONFIG=kubeconfig.json
+
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f manifests
+          kubectl apply -f manifests/
