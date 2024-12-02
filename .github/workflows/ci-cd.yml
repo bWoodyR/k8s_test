@@ -27,19 +27,20 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Kubernetes CLI
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure kubeconfig
+      # 1. Nastavenie Kubernetes prístupu
+      - name: Set up Kubernetes access
         run: |
-          echo "${{ secrets.KUBECONFIG_JSON }}" > kubeconfig.json
-          export KUBECONFIG=kubeconfig.json
+          kubectl config set-cluster my-cluster --server=${{ secrets.KUBE_API_URL }}
+          kubectl config set-credentials kubeconfig-user-klqbh4bvc5 --token=${{ secrets.KUBE_TOKEN }}
+          kubectl config set-context my-context --cluster=my-cluster --user=kubeconfig-user-klqbh4bvc5
+          kubectl config use-context my-context
 
+      # 2. Nasadenie do Kubernetes
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f manifests/
+
+      # 3. Overenie, že pody sú nasadené
+      - name: Verify Deployment
+        run: |
+          kubectl get pods
