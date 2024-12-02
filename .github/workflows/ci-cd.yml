@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -9,8 +9,47 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout kód z repozitára
       - name: Checkout code
         uses: actions/checkout@v3
+
+      # 2. Prihlásenie do Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3. Build a push Docker image
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/k8s_test:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/k8s_test:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Nastavenie Kubernetes prístupu
+      - name: Set up Kubernetes access
+        run: |
+          kubectl config set-cluster my-cluster --server=${{ secrets.KUBE_API_URL }}
+          kubectl config set-credentials user --token=${{ secrets.KUBE_TOKEN }}
+          kubectl config set-context my-context --cluster=my-cluster --user=user
+          kubectl config use-context my-context
+
+      # Checkout kódu z repozitára
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: List files
+        run: ls -R $GITHUB_WORKSPACE
+
+      - name: Print current directory
+        run: pwd
+
+      - name: Ensure working directory
+        run: cd $GITHUB_WORKSPACE
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -18,15 +57,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build -t bwoodyr/k8s_test:latest .
-          docker push bwoodyr/k8s_test:latest
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+      # 2. Nasadenie do Kubernetes
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f manifests/
+          ls -R manifests/
+          kubectl apply -f $GITHUB_WORKSPACE/manifests/
+
+      # 3. Overenie, že pody sú nasadené
+      - name: Verify Deployment
+        run: |
+          kubectl get pods
