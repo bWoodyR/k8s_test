@@ -38,9 +38,13 @@ jobs:
           kubectl config set-context my-context --cluster=my-cluster --user=user
           kubectl config use-context my-context
 
+      - name: List files
+        run: ls -R
+
       # 2. Nasadenie do Kubernetes
       - name: Deploy to Kubernetes
         run: |
+          ls -R manifests/
           kubectl apply -f manifests/
 
       # 3. Overenie, že pody sú nasadené
