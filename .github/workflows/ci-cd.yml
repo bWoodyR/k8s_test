@@ -41,6 +41,12 @@ jobs:
       - name: List files
         run: ls -R
 
+      - name: Print current directory
+        run: pwd
+
+      - name: Ensure working directory
+        run: cd $GITHUB_WORKSPACE
+
       # 2. Nasadenie do Kubernetes
       - name: Deploy to Kubernetes
         run: |
