@@ -31,8 +31,8 @@ jobs:
       - name: Set up Kubernetes access
         run: |
           kubectl config set-cluster my-cluster --server=${{ secrets.KUBE_API_URL }}
-          kubectl config set-credentials kubeconfig-user-klqbh4bvc5 --token=${{ secrets.KUBE_TOKEN }}
-          kubectl config set-context my-context --cluster=my-cluster --user=kubeconfig-user-klqbh4bvc5
+          kubectl config set-credentials user --token=${{ secrets.KUBE_TOKEN }}
+          kubectl config set-context my-context --cluster=my-cluster --user=user
           kubectl config use-context my-context
 
       # 2. Nasadenie do Kubernetes
