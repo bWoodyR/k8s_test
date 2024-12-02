@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashy-ingressroute
+  namespace: aplikacie
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(dashy.itdynatsy.eu) && PathPrefix(/)
+      kind: Rule
+      services:
+        - name: dashy
+          port: 8080
