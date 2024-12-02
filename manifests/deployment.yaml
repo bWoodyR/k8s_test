@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: <DOCKER_REGISTRY>/my-app:latest
+        image: bwoodyr/k8s_test:latest
         ports:
         - containerPort: 4010
