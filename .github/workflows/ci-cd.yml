@@ -51,6 +51,12 @@ jobs:
       - name: Ensure working directory
         run: cd $GITHUB_WORKSPACE
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       # 2. Nasadenie do Kubernetes
       - name: Deploy to Kubernetes
         run: |
