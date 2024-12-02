@@ -38,8 +38,12 @@ jobs:
           kubectl config set-context my-context --cluster=my-cluster --user=user
           kubectl config use-context my-context
 
+      # Checkout kódu z repozitára
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: List files
-        run: ls -R
+        run: ls -R $GITHUB_WORKSPACE
 
       - name: Print current directory
         run: pwd
@@ -51,7 +55,7 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           ls -R manifests/
-          kubectl apply -f manifests/
+          kubectl apply -f $GITHUB_WORKSPACE/manifests/
 
       # 3. Overenie, že pody sú nasadené
       - name: Verify Deployment
