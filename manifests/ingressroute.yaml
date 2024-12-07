@@ -11,4 +11,4 @@ spec:
       kind: Rule
       services:
         - name: my-app-service
-          port: 4010
+          port: 80
