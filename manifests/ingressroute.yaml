@@ -10,5 +10,5 @@ spec:
     - match: Host(dashy.itdynatsy.eu) && PathPrefix(/)
       kind: Rule
       services:
-        - name: dashy
-          port: 8080
+        - name: my-app
+          port: 4010
