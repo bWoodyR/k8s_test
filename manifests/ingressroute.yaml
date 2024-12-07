@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(dashy.itdynatsy.eu) && PathPrefix(/)
+    - match: Host(dashy.itdynatsy.eu)
       kind: Rule
       services:
         - name: my-app-service
